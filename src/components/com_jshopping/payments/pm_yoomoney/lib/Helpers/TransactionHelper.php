@@ -153,7 +153,11 @@ class TransactionHelper
      */
     private function isRefundAlreadyGot($refundId)
     {
-        $refund = $this->orderModel->getRefundById($refundId);
+        try {
+            $refund = $this->orderModel->getRefundById($refundId);
+        } catch (\Exception $e) {
+            $this->logger->log('debug', 'Failed to read a refund from DB: ' . $e->getMessage());
+        }
 
         return !empty($refund);
     }
@@ -322,7 +326,18 @@ class TransactionHelper
             $this->orderModel->insertRefund($order->getId(), $refund);
         } catch (\Exception $e) {
             $this->logger->log('debug', 'Failed to save a refund to DB: ' . $e->getMessage());
-            return;
+
+            $this->logger->log('debug', 'Will create the refund table.');
+            try {
+                $tableChecker = new \YooMoney\Updater\Tables\TableChecker();
+                $tableChecker->checkYoomoneyRefunds();
+            } catch (\Exception $e) {
+                $this->logger->log('debug', 'Failure to create the refund table: ' . $e->getMessage());
+
+                return;
+            }
+
+            $this->orderModel->insertRefund($order->getId(), $refund);
         }
 
         /** @var jshopCheckout $checkout */

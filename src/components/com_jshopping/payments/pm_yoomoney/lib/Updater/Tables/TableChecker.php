@@ -5,20 +5,11 @@ namespace YooMoney\Updater\Tables;
 class TableChecker
 {
     /**
-     * Список таблиц, которые должны быть созданы для работы функций модуля
+     * Создает таблицу возвратов, если не была создана ранее
+     *
+     * @return void
      */
-    const TABLES = [
-        'YoomoneyRefunds'
-    ];
-
-    public function checkTables()
-    {
-        foreach (self::TABLES as $table) {
-            $this->{'check' . $table}();
-        }
-    }
-
-    private function checkYoomoneyRefunds()
+    public function checkYoomoneyRefunds()
     {
         $db = \JFactory:: getDbo();
         $query = "CREATE TABLE IF NOT EXISTS `#__yoomoney_refunds` (

@@ -525,7 +525,7 @@ class pm_yoomoney extends PaymentRoot
         $fileName    = $this->downloadLastVersion($versionInfo['tag']);
         if (!empty($fileName)) {
             if ($this->createBackup(_JSHOP_YOO_VERSION)) {
-                if ($this->unpackLastVersion($fileName) && $this->checkNewTables()) {
+                if ($this->unpackLastVersion($fileName)) {
                     $result = array(
                         'message' => sprintf(_JSHOP_YOO_SUCCESS_UPDATE_VERSION, $_POST['version'], $fileName),
                         'success' => true,
@@ -550,21 +550,6 @@ class pm_yoomoney extends PaymentRoot
         }
 
         return $result;
-    }
-
-    /**
-     * Вызывает функцию проверки на существоние таблиц
-     *
-     * @return bool
-     *
-     * @throws Exception
-     */
-    private function checkNewTables()
-    {
-        $tableChecker = new \YooMoney\Updater\Tables\TableChecker();
-        $tableChecker->checkTables();
-
-        return true;
     }
 
     private function installApplePayFileForWidget()
